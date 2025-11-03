@@ -150,7 +150,7 @@ class AuthorizedAccountSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
     def initiate_oauth_flow(self, instance, authorized_scopes):
-        if instance.credentials_format is CredentialsFormats.OAUTH2:
+        if instance.credentials_format.is_oauth2_based:
             instance.initiate_oauth2_flow(authorized_scopes)
         elif instance.credentials_format is CredentialsFormats.OAUTH1A:
             instance.initiate_oauth1_flow()

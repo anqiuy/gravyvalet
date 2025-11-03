@@ -73,7 +73,7 @@ class ExternalService(AddonsServiceBaseModel):
 
     @property
     def auth_uri(self):
-        if self.credentials_format is not CredentialsFormats.OAUTH2:
+        if not self.credentials_format.is_oauth2_based:
             return None
         return self.oauth2_client_config.auth_uri
 
@@ -99,8 +99,7 @@ class ExternalService(AddonsServiceBaseModel):
         if not self.configurable_api_root and not self.api_base_url:
             raise ValidationError("Public-only services must specify an api_base_url")
         if (
-            self.credentials_format is CredentialsFormats.OAUTH2
-            and not self.oauth2_client_config
+            self.credentials_format.is_oauth2_based and not self.oauth2_client_config
         ) or (
             self.credentials_format is CredentialsFormats.OAUTH1A
             and not self.oauth1_client_config

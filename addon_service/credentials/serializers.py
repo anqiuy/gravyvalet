@@ -14,6 +14,7 @@ SUPPORTED_CREDENTIALS_FORMATS = set(CredentialsFormats) - {
     CredentialsFormats.UNSPECIFIED,
     CredentialsFormats.OAUTH2,
     CredentialsFormats.OAUTH1A,
+    CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN,
 }
 
 

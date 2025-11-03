@@ -189,11 +189,10 @@ class AuthorizedAccount(AddonsServiceBaseModel):
         Returns None if the ExternalStorageService does not support OAuth
         or if the initial credentials exchange has already occurred.
         """
-        match self.credentials_format:
-            case CredentialsFormats.OAUTH2:
-                return self.oauth2_auth_url
-            case CredentialsFormats.OAUTH1A:
-                return self.oauth1_auth_url
+        if self.credentials_format.is_oauth2_based:
+            return self.oauth2_auth_url
+        elif self.credentials_format is CredentialsFormats.OAUTH1A:
+            return self.oauth1_auth_url
         return None
 
     @property
@@ -256,7 +255,7 @@ class AuthorizedAccount(AddonsServiceBaseModel):
 
     @transaction.atomic
     def initiate_oauth2_flow(self, authorized_scopes=None):
-        if self.credentials_format is not CredentialsFormats.OAUTH2:
+        if not self.credentials_format.is_oauth2_based:
             raise ValueError("Cannot initiate OAuth2 flow for non-OAuth2 credentials")
         self.oauth2_token_metadata = OAuth2TokenMetadata.objects.create(
             authorized_scopes=(
@@ -290,7 +289,7 @@ class AuthorizedAccount(AddonsServiceBaseModel):
 
     def validate_oauth_state(self) -> None:
         if (
-            self.credentials_format is not CredentialsFormats.OAUTH2
+            not self.credentials_format.is_oauth2_based
             or not self.oauth2_token_metadata
         ):
             return

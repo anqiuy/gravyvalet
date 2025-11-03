@@ -15,7 +15,6 @@ import aiohttp
 from asgiref.sync import sync_to_async
 
 from addon_service.common import exceptions
-from addon_service.common.credentials_formats import CredentialsFormats
 from addon_toolkit.constrained_network.http import (
     HttpRequestInfo,
     HttpRequestor,
@@ -111,7 +110,7 @@ class GravyvaletHttpRequestor(HttpRequestor):
         ) as _response:
             if (
                 _response.status == HTTPStatus.UNAUTHORIZED
-                and _private.account.credentials_format == CredentialsFormats.OAUTH2
+                and _private.account.credentials_format.is_oauth2_based
             ):
                 # Assume unauthorized because of token expiration.
                 raise exceptions.ExpiredAccessToken

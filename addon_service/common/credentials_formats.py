@@ -25,6 +25,7 @@ class CredentialsFormats(Enum):
     PERSONAL_ACCESS_TOKEN = 4
     OAUTH1A = 5
     DATAVERSE_API_TOKEN = 6
+    AZURE_BLOB_STORAGE_ACCESS_TOKEN = 7
 
     @property
     def dataclass(self):
@@ -42,6 +43,8 @@ class CredentialsFormats(Enum):
                 return UsernamePasswordCredentials
             case CredentialsFormats.DATAVERSE_API_TOKEN:
                 return AccessTokenCredentials
+            case CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN:
+                return AccessTokenCredentials
         raise ValueError(f"No dataclass support for credentials type {self.name}")
 
     @property
@@ -55,6 +58,14 @@ class CredentialsFormats(Enum):
             CredentialsFormats.USERNAME_PASSWORD,
             CredentialsFormats.PERSONAL_ACCESS_TOKEN,
             CredentialsFormats.DATAVERSE_API_TOKEN,
+        }
+
+    @property
+    def is_oauth2_based(self) -> bool:
+        """return True if credentials of this format are based on OAuth2"""
+        return self in {
+            CredentialsFormats.OAUTH2,
+            CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN,
         }
 
     def iter_headers(self, credentials: Credentials) -> Iterator[tuple[str, str]]:
@@ -83,3 +94,7 @@ class CredentialsFormats(Enum):
                     credentials_str.encode("utf-8")
                 ).decode("utf-8")
                 yield "Authorization", f"Basic {base64_credentials}"
+            case CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN if isinstance(
+                credentials, AccessTokenCredentials
+            ):
+                yield "Authorization", f"Bearer {credentials.access_token}"

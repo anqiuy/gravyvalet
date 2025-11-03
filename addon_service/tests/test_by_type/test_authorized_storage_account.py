@@ -33,6 +33,7 @@ VALID_CREDENTIALS_FORMATS = set(CredentialsFormats) - {CredentialsFormats.UNSPEC
 NON_OAUTH_FORMATS = VALID_CREDENTIALS_FORMATS - {
     CredentialsFormats.OAUTH2,
     CredentialsFormats.OAUTH1A,
+    CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN,
 }
 
 MOCK_CREDENTIALS = {
@@ -49,6 +50,9 @@ MOCK_CREDENTIALS = {
         password="unsafe",
     ),
     CredentialsFormats.DATAVERSE_API_TOKEN: AccessTokenCredentials(
+        access_token="token"
+    ),
+    CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN: AccessTokenCredentials(
         access_token="token"
     ),
 }
@@ -294,6 +298,9 @@ class TestAuthorizedStorageAccountModel(TestCase):
         CredentialsFormats.DATAVERSE_API_TOKEN: AccessTokenCredentials(
             access_token="new_token"
         ),
+        CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN: AccessTokenCredentials(
+            access_token="new_token"
+        ),
     }
     INVALID_CREDENTIALS = {
         CredentialsFormats.PERSONAL_ACCESS_TOKEN: MOCK_CREDENTIALS[
@@ -306,6 +313,9 @@ class TestAuthorizedStorageAccountModel(TestCase):
             CredentialsFormats.ACCESS_KEY_SECRET_KEY
         ],
         CredentialsFormats.DATAVERSE_API_TOKEN: MOCK_CREDENTIALS[
+            CredentialsFormats.ACCESS_KEY_SECRET_KEY
+        ],
+        CredentialsFormats.AZURE_BLOB_STORAGE_ACCESS_TOKEN: MOCK_CREDENTIALS[
             CredentialsFormats.ACCESS_KEY_SECRET_KEY
         ],
     }
